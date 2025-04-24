@@ -1,4 +1,4 @@
-# TypeScript Runtime Validation Checker
+# ts-validator
 
 This project is a Rust-based static analysis tool designed to enhance runtime type safety in TypeScript applications, particularly those handling external requests (e.g., web servers). It parses TypeScript codebases to detect potentially unvalidated usage of request inputs like `req.body`, `req.params`, and `req.query`.
 

@@ -1,52 +1,55 @@
-# TypeScript Runtime Validation Checker – End-to-End Flow
+# ts-validator -to-End Flow
 
 ```text
 User CLI
-$ ts-validator ./src --json --fail-on-warning
+$ ts-validator ./src --rules zod-strict --fail-on-warning
     │
     ▼
 ┌──────────────────────────────┐
 │        CLI Crate (`cli`)     │
 │ - Parses command-line args   │
-│ - Orchestrates flow          │
-│ - Handles exit code logic    │
+│ - Sets ValidationRuleSet     │
+│ - Orchestrates the pipeline  │
+│ - Handles --fail-on-warning  │
 └────────────┬─────────────────┘
              │
              ▼
 ┌──────────────────────────────┐
 │     Parser Crate (`parser`)  │
-│ - Recursively finds .ts files│
-│ - Resolves imports           │
-│ - Parses into SWC ASTs       │
-│ - Handles circular refs      │
+│ - Finds .ts/.tsx files       │
+│ - Resolves relative imports  │
+│ - Parses files to SWC ASTs   │
+│ - Returns Vec<ParsedModule>  │
 └────────────┬─────────────────┘
              │
              ▼
 ┌──────────────────────────────┐
 │   Analysis Crate (`analysis`)│
-│ - Traverses ASTs             │
-│ - Finds req.body/params/etc  │
-│ - Tracks aliasing            │
-│ - Asks heuristics if safe →  │
+│ - Walks ASTs with visitors   │
+│ - Identifies route handlers  │
+│ - Tracks aliases (`req.body`)│
+│ - Records unvalidated access │
 └────────────┬─────────────────┘
              │
              ▼
 ┌──────────────────────────────┐
-│ Heuristics Crate (`heuristics`) │
-│ - Validates input usage      │
-│ - e.g. z.object().parse(...) │
-│ - Flags unsafe access        │
+│ Validation Crate (`validation`) │
+│ - Applies rule set logic     │
+│ - Matches .parse(), etc.     │
+│ - Supports ZodStrict, Lenient│
 └────────────┬─────────────────┘
              │
              ▼
 ┌──────────────────────────────┐
 │ Reporting Crate (`reporting`)│
-│ - Builds Violation structs   │
-│ - Outputs CLI/JSON reports   │
+│ - Constructs Violation structs│
+│ - Formats output (CLI/JSON)  │
+│ - Used by analysis and CLI   │
 └────────────┬─────────────────┘
              │
              ▼
-Final Output
-- Human-readable output
-- Or JSON if `--json`
-- Exits with 0 or 1 based on `--fail-on-warning`
+🎯 Final Output
+- Prints clear violation list
+- Supports JSON output (TBD)
+- Exit code 1 if `--fail-on-warning`
+```

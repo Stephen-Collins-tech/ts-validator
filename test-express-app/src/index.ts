@@ -23,34 +23,10 @@ const userIdSchema = z.object({
   id: z.string().transform((val) => parseInt(val, 10)),
 });
 
-// Get all users
-app.get('/users', (req: Request, res: Response<ApiResponse<User[]>>) => {
-  res.json({ data: users });
-});
-
-// Get user by ID
-app.get('/users/:id', (req: Request<{ id: string }>, res: Response<ApiResponse<User | null>>) => {
-  try {
-    const { id } = userIdSchema.parse(req.params);
-    const user = users.find(u => u.id === id);
-    if (user) {
-      res.json({ data: user });
-    } else {
-      res.status(404).json({ data: null, message: 'User not found' });
-    }
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      res.status(400).json({ data: null, message: error.errors[0].message });
-    } else {
-      res.status(500).json({ data: null, message: 'Internal server error' });
-    }
-  }
-});
-
-// Create user
+// ✅ Fully validated input
 app.post('/users', (req: Request<{}, {}, Omit<User, 'id'>>, res: Response<ApiResponse<User | null>>) => {
   try {
-    const validatedData = userSchema.parse(req.body);
+    const validatedData = userSchema.parse(req.body); // ✅ Safe usage
     const newUser: User = {
       id: nextUserId++,
       ...validatedData,
@@ -58,14 +34,52 @@ app.post('/users', (req: Request<{}, {}, Omit<User, 'id'>>, res: Response<ApiRes
     users.push(newUser);
     res.status(201).json({ data: newUser, message: 'User created successfully' });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      res.status(400).json({ data: null, message: error.errors[0].message });
-    } else {
-      res.status(500).json({ data: null, message: 'Internal server error' });
-    }
+    res.status(400).json({ data: null, message: 'Invalid user' });
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+// ✅ Lenient validation (only valid under --rules zod-lenient)
+app.post('/users-lenient', (req: Request, res: Response<ApiResponse<User | null>>) => {
+  const result = userSchema.safeParse(req.body); // ✅ Lenient usage
+
+  if (!result.success) {
+    res.status(400).json({ data: null, message: 'Invalid user (lenient)' });
+    return;
+  }
+
+  const newUser: User = {
+    id: nextUserId++,
+    ...result.data,
+  };
+
+  users.push(newUser);
+  res.status(201).json({ data: newUser, message: 'User created (lenient)' });
+});
+
+
+// ❗️Unvalidated access: direct use of req.query
+app.get('/raw-query', (req: Request, res: Response) => {
+  console.log('Raw query:', req.query); // ❌ Unvalidated
+  res.send('Logged query');
+});
+
+// ❗️Unvalidated access: alias
+app.get('/alias-body', (req: Request, res: Response) => {
+  const data = req.body; // ❌ alias to req.body
+  console.log(data); // ❌ unvalidated usage
+  res.send('Aliased body used');
+});
+
+// ❗️Unvalidated access: destructured
+app.get('/destructured-body', (req: Request, res: Response) => {
+  const { body } = req; // ❌ destructured alias
+  console.log(body); // ❌ unvalidated usage
+  res.send('Destructured body used');
+});
+
+// ❗️Unvalidated access: renamed destructured alias
+app.get('/renamed-alias', (req: Request, res: Response) => {
+  const { body: input } = req; // ❌ input → req.body
+  console.log(input.email); // ❌ usage
+  res.send('Renamed destructured alias used');
 });

@@ -1,73 +1,92 @@
 # Project Architecture
 
-This document outlines the structure and purpose of the crates within the TypeScript Runtime Validation Checker project, organized as a Cargo workspace.
+This document outlines the structure and purpose of the crates within the ts-validator project, organized as a Cargo workspace.
 
 ## Workspace Structure
 
 - The root `Cargo.toml` defines the workspace members.
-- Individual crates reside within the `crates/` directory.
+- Each crate lives under the `crates/` directory and has its own `Cargo.toml`.
 
 ## Crates
 
 ### Root `Cargo.toml`
-- **Purpose:** Defines the Cargo workspace and points to the member crates located in `crates/`.
+- **Purpose:** Declares all workspace member crates and applies shared settings.
 - **Responsibilities:**
     - Defines workspace members.
-    - Can define shared workspace-level dependencies or build profiles.
+    - Optionally configures shared dependencies and profiles.
 
-### `TASKS.md`
-- **Purpose:** Tracks the Minimum Viable Product (MVP) requirements and potential future tasks.
-- **Responsibilities:**
-    - Lists features and functionalities to be implemented.
-    - Acts as a checklist for development progress.
-    - Stays at the root level.
+---
 
-### `crates/cli` (Binary Crate)
-- **Purpose:** The main executable entry point for the CLI tool (`ts-validator` or similar). Contains `src/main.rs`.
+### `crates/cli` – **Command-Line Interface**
+- **Type:** Binary crate
+- **Purpose:** Top-level entry point for running the tool from the terminal.
 - **Responsibilities:**
     - Parses command-line arguments using `clap`.
-    - Depends on the other workspace crates (`error`, `parser`, `analysis`, `reporting`).
-    - Instantiates and orchestrates the components from the library crates.
-    - Handles top-level error reporting to the user (using `eprintln!`).
-    - Determines the final exit code of the application based on success, errors, or the `--fail-on-warning` flag.
+    - Accepts options like `--fail-on-warning` and `--rules`.
+    - Initializes the `ValidationRuleSet` from user input.
+    - Orchestrates parsing and analysis.
+    - Outputs violations in CLI format.
+    - Sets appropriate exit code based on violations and flags.
 
-### `crates/error` (Library Crate)
-- **Purpose:** Defines the shared custom error types for the application. Contains `src/lib.rs`.
-- **Responsibilities:**
-    - Contains the main `AnalyzerError` enum (using `thiserror`).
-    - Provides specific variants for different error conditions (I/O, parsing, resolution, analysis) to allow for granular error handling across other crates.
+---
 
-### `crates/parser` (Library Crate)
-- **Purpose:** Handles file discovery, reading, parsing, and import resolution. Contains `src/lib.rs`.
+### `crates/parser` – **File Discovery and AST Parsing**
+- **Type:** Library crate
+- **Purpose:** Finds TypeScript source files and parses them into SWC ASTs.
 - **Responsibilities:**
-    - Depends on `error`.
-    - Finding all `.ts` files within a given directory (`walkdir`).
-    - Managing the SWC `SourceMap`.
-    - Parsing TypeScript source code into Abstract Syntax Trees (ASTs) using `swc_ecma_parser`.
-    - Caching parsed ASTs to avoid redundant work and handle circular dependencies.
-    - Resolving module specifiers (e.g., `"../utils/validation"`) to absolute file paths.
+    - Recursively discovers `.ts` and `.tsx` files.
+    - Parses files using `swc_ecma_parser`.
+    - Associates ASTs with file metadata and a `SourceMap`.
+    - Exposes a `ParsedModule` struct.
 
-### `crates/analysis` (Library Crate)
-- **Purpose:** Contains the core analysis logic for detecting unvalidated input usage. Contains `src/lib.rs`.
-- **Responsibilities:**
-    - Depends on `error`, `parser`, and `heuristics`.
-    - Implements the `swc_ecma_visit::Visit` trait to traverse the ASTs.
-    - Identifies potential access points for request inputs (`req.body`, `req.params`, `req.query`), including aliased variables.
-    - Uses the `parser` crate to request parsed ASTs (including resolving imports).
-    - Uses the `heuristics` crate to determine if an identified input usage is considered "validated".
-    - Generates `Violation` data structures (defined potentially in `reporting` or a shared types crate).
+---
 
-### `crates/heuristics` (Library Crate)
-- **Purpose:** Defines the rules and logic for determining if a request input usage is considered validated. Contains `src/lib.rs`.
+### `crates/analysis` – **AST Traversal and Violation Detection**
+- **Type:** Library crate
+- **Purpose:** Runs analysis visitors on each parsed AST.
 - **Responsibilities:**
-    - Depends on `error`.
-    - Contains functions or data structures that represent validation patterns (e.g., specific function calls like `z.object(...).parse()`, wrappers like `validate(...)`).
-    - Takes AST nodes (or relevant context) as input and returns whether the usage meets the defined validation criteria.
+    - Walks AST nodes to identify unvalidated input usage.
+    - Detects access to `req.body`, `req.params`, `req.query`, and aliasing patterns.
+    - Tracks whether any `z.parse()`-style validations were applied.
+    - Delegates validation checks to the `validation` crate.
+    - Emits `Violation` records with location and message.
 
-### `crates/reporting` (Library Crate)
-- **Purpose:** Handles the definition of violation types and the formatting/output of analysis results. Contains `src/lib.rs`.
+---
+
+### `crates/validation` – **Validation Rule Engine**
+- **Type:** Library crate
+- **Purpose:** Centralizes logic for detecting whether a piece of code performs input validation.
 - **Responsibilities:**
-    - Depends on `error`.
-    - Defines the `Violation` struct (containing file path, line/column, message, etc.).
-    - Formats a list of `Violation`s into a human-readable string for console output.
-    - Formats a list of `Violation`s into a JSON string for machine-readable output (`--json` flag). 
+    - Defines the `ValidationRuleSet` enum.
+    - Implements detection functions like `is_validation_call()`.
+    - Supports configurable rule modes (e.g., `ZodStrict`, `ZodLenient`, `Custom`).
+    - Allows extension with future rule sets.
+
+---
+
+### `crates/reporting` – **Violation Structs and Output Formatting**
+- **Type:** Library crate
+- **Purpose:** Defines how violations are stored and output.
+- **Responsibilities:**
+    - Defines `Violation` and `ViolationKind` structs.
+    - Tracks metadata (file, line, column, message, type).
+    - Future: supports JSON and other formats.
+    - Used by both `analysis` and `cli`.
+
+---
+
+### `crates/error` – **Error Definitions (Future Use)**
+- **Type:** Library crate
+- **Purpose:** Placeholder for shared error handling across crates.
+- **Responsibilities:**
+    - Currently unused.
+    - Can host custom error types for I/O, parser, analysis, etc.
+
+---
+
+### `crates/utils`
+- **Type:** Library crate 
+- **Purpose:** Contains reusable formatting helpers (e.g., for location strings).
+- **Responsibilities:**
+    - Formats `[file:line:col]` strings.
+    - Avoids code duplication across analysis/reporting.

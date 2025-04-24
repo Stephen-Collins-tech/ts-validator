@@ -1,0 +1,7 @@
+[package]
+name = "debug"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+swc_common = "8.1.0"

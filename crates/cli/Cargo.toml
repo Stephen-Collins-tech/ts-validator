@@ -7,6 +7,7 @@ edition = "2021"
 clap = { version = "4.5.7", features = ["derive"] }
 analysis = { path = "../analysis" }
 error = { path = "../error" }
-heuristics = { path = "../heuristics" }
+validation = { path = "../validation" }
 parser = { path = "../parser" }
 reporting = { path = "../reporting" }
+debug = { path = "../debug" }

@@ -176,3 +176,70 @@ pub fn visit_module(cm: &Arc<SourceMap>, module: &Module, rules: ValidationRuleS
     visitor.visit_module(module);
     visitor.violations
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use swc_common::{DUMMY_SP, BytePos, SyntaxContext};
+    use swc_ecma_ast::{Ident, IdentName, ComputedPropName, Expr, Lit, Str};
+
+    #[test]
+    fn test_member_name_ident() {
+        let ident_name = IdentName { span: DUMMY_SP, sym: "testProp".into() };
+        let prop = MemberProp::Ident(ident_name);
+        assert_eq!(member_name(&prop), "testProp");
+    }
+
+    #[test]
+    fn test_member_name_computed_lit() {
+        let prop = MemberProp::Computed(ComputedPropName {
+            span: DUMMY_SP,
+            expr: Box::new(Expr::Lit(Lit::Str(Str {
+                span: DUMMY_SP,
+                value: "computedProp".into(),
+                raw: None,
+            }))),
+        });
+        assert_eq!(member_name(&prop), r#"[computed: Str(Str { span: 0..0, value: "computedProp", raw: None })]"#);
+    }
+
+    #[test]
+    fn test_member_name_computed_ident() {
+        let ident = Ident { span: DUMMY_SP, sym: "varName".into(), ctxt: SyntaxContext::empty(), optional: false };
+        let prop = MemberProp::Computed(ComputedPropName {
+            span: DUMMY_SP,
+            expr: Box::new(Expr::Ident(ident)),
+        });
+        assert_eq!(member_name(&prop), "[computed: varName]");
+    }
+
+    #[test]
+    fn test_member_name_computed_other() {
+        let call_expr = Expr::Call(CallExpr {
+            span: DUMMY_SP,
+            callee: Callee::Expr(Box::new(Expr::Ident(Ident {
+                span: DUMMY_SP,
+                sym: "someFunc".into(),
+                ctxt: SyntaxContext::empty(),
+                optional: false,
+            }))),
+            args: vec![],
+            type_args: None,
+            ctxt: SyntaxContext::empty(),
+        });
+        let prop = MemberProp::Computed(ComputedPropName {
+            span: DUMMY_SP,
+            expr: Box::new(call_expr),
+        });
+        assert_eq!(member_name(&prop), "[computed]");
+    }
+
+    #[test]
+    fn test_member_name_private_name() {
+        let private_name = PrivateName { span: DUMMY_SP, name: "privateField".into() };
+        let prop = MemberProp::PrivateName(private_name);
+        assert_eq!(member_name(&prop), "[unsupported]");
+    }
+
+    // TODO: Add tests for AnalyzerVisitor and ControllerVisitor
+}

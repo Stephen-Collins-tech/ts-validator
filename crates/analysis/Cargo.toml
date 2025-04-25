@@ -11,3 +11,6 @@ clap = { workspace = true }
 swc_common = { workspace = true }
 swc_ecma_ast = { workspace = true }
 swc_ecma_visit = { workspace = true }
+
+[dev-dependencies]
+swc_ecma_parser = { workspace = true }

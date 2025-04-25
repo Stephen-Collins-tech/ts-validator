@@ -2,3 +2,12 @@
 node_modules
 test_output
 npm-wrapper/bin
+
+# Code Coverage (cargo llvm-cov)
+target/llvm-cov/
+target/llvm-profraw/ # Raw profile data location
+# Common coverage formats
+lcov.info
+cobertura.xml
+# Raw profile data from llvm-cov (now within target/llvm-profraw)
+*.profraw 

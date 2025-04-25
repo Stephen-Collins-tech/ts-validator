@@ -77,6 +77,24 @@ If you're looking for a good place to start contributing, check the issues label
 
 ---
 
+## 📦 Code Coverage
+
+To generate a code coverage report, first install the `cargo-llvm-cov` tool:
+
+```bash
+cargo install cargo-llvm-cov
+```
+
+Then, run the following command to generate a code coverage report:
+
+```bash
+cargo llvm-cov --html
+```
+
+This will generate a code coverage report in the `target/llvm-cov/html` directory.
+
+---
+
 # 🤝 Pull Request Guidelines
 
 - Small, focused PRs are easier to review.

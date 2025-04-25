@@ -10,6 +10,5 @@ validation = { path = "../validation" }
 swc_ecma_ast = "8.1.2"
 swc_ecma_visit = "8.0.0"
 swc_common = "8.1.0"
-debug = { path = "../debug" }
 utils = { path = "../utils" }
 reporting = { path = "../reporting" }

@@ -1,6 +1,5 @@
 use crate::fs::find_ts_files;
 use crate::types::ParsedModule;
-// use debug::log_node;
 use std::path::Path;
 use std::fs;
 use std::sync::Arc;
@@ -36,8 +35,6 @@ pub fn parse_dir(entry: &Path) -> Vec<ParsedModule> {
         match parser.parse_module() {
             Ok(module) => {
                 println!("✅ Parsed {} successfully", fm.name);
-                // log_node("RootModule", &cm, &module, 0); // Optional: node-level output
-                // You can now pass `module` to analysis
                 parsed_modules.push(ParsedModule {
                     path: path.to_path_buf(),
                     module,

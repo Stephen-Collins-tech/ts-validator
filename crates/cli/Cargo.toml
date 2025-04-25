@@ -10,4 +10,3 @@ error = { path = "../error" }
 validation = { path = "../validation" }
 parser = { path = "../parser" }
 reporting = { path = "../reporting" }
-debug = { path = "../debug" }

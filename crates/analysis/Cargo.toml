@@ -1,14 +1,13 @@
 [package]
 name = "analysis"
-version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.5.7", features = ["derive"] }
-parser = { path = "../parser" }
 validation = { path = "../validation" }
-swc_ecma_ast = "8.1.2"
-swc_ecma_visit = "8.0.0"
-swc_common = "8.1.0"
 utils = { path = "../utils" }
 reporting = { path = "../reporting" }
+parser = { path = "../parser" }
+clap = { workspace = true }
+swc_common = { workspace = true }
+swc_ecma_ast = { workspace = true }
+swc_ecma_visit = { workspace = true }

@@ -53,17 +53,6 @@ This document outlines the structure and purpose of the crates within the ts-val
 
 ---
 
-### `crates/validation` – **Validation Rule Engine**
-- **Type:** Library crate
-- **Purpose:** Centralizes logic for detecting whether a piece of code performs input validation.
-- **Responsibilities:**
-    - Defines the `ValidationRuleSet` enum.
-    - Implements detection functions like `is_validation_call()`.
-    - Supports configurable rule modes (e.g., `ZodStrict`, `ZodLenient`, `Custom`).
-    - Allows extension with future rule sets.
-
----
-
 ### `crates/reporting` – **Violation Structs and Output Formatting**
 - **Type:** Library crate
 - **Purpose:** Defines how violations are stored and output.

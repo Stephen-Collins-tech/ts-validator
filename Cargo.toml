@@ -1,18 +1,29 @@
-# [package]
-# name = "rust-typescript-ast-parsing"
-# version = "0.1.0"
-# edition = "2024"
-
-# [dependencies]
-
 [workspace]
-resolver = "2" # 2021
+resolver = "2"
 members = [
     "crates/analysis",
     "crates/validation",
     "crates/parser",
     "crates/reporting",
     "crates/cli",
+    "crates/utils",
 ]
 
+[workspace.package]
+version = "0.1.0" # Pick the first version you want
+authors = ["Stephen Collins <stephen@stephencollins.tech>"]
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/Stephen-Collins-tech/ts-validator"
+readme = "README.md"
+keywords = ["typescript", "validation", "cli", "static-analysis"]
+categories = ["command-line-utilities", "development-tools"]
+description = "Fast Rust-based CLI to detect runtime input validation gaps in TypeScript APIs."
 
+[workspace.dependencies]
+# Shared dependencies across crates (optional, leave empty for now)
+swc_ecma_ast = "8.1.2"
+swc_ecma_visit = "8.0.0"
+swc_common = "8.1.0"
+swc_ecma_parser = "11.1.2"
+clap = { version = "4.5.7", features = ["derive"] }

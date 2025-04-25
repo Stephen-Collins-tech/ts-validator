@@ -1,54 +1,75 @@
 # ts-validator
 
-This project is a Rust-based static analysis tool designed to enhance runtime type safety in TypeScript applications, particularly those handling external requests (e.g., web servers). It parses TypeScript codebases to detect potentially unvalidated usage of request inputs like `req.body`, `req.params`, and `req.query`.
+**Rust-powered static analysis for TypeScript APIs.**  
+Find unvalidated `req.body`, `req.query`, and `req.params` — before they cause runtime errors or security vulnerabilities.
 
-The primary goal is to prevent runtime errors and security vulnerabilities that can arise from trusting external data without proper validation.
+---
 
-## Current Features (MVP In Progress)
+## 🚀 Quickstart
 
-*   **TypeScript Parsing:** Recursively parses `.ts` and `.tsx` files starting from a specified entry point (file or directory).
-*   **AST Generation:** Uses the SWC library to generate Abstract Syntax Trees (ASTs) for each parsed file.
-*   **Relative Import Resolution:** Follows relative import paths (`import x from './module'`) to analyze the entire relevant codebase.
-*   **CLI Interface:** Provides a basic command-line interface using `clap`:
-    *   Specify entry path (file or directory) via positional argument.
-    *   `--json` flag (reporting mechanism TBD).
-    *   `--fail-on-warning` flag (CI/CD feature TBD).
-    *   Includes `--help` and `--version`.
-*   **Basic Detection:** Includes an initial AST visitor pass that identifies *all* member access expressions matching `req.body`, `req.params`, or `req.query`. (Note: This currently flags all accesses, validation context checks are pending).
+No install needed. Just run:
 
-## How to Build & Run (Example)
+```bash
+npx ts-validator path/to/entry-file.ts
+```
 
-1.  **Build:**
-    ```bash
-    cargo build
-    ```
-2.  **Run (e.g., on the test application):**
-    ```bash
-    # Using cargo run
-    cargo run -- test-app/src/index.ts
-    # Or using the compiled binary
-    ./target/debug/rust-typescript-ast-parsing test-app/src/index.ts
-    ```
-    *(Replace `rust-typescript-ast-parsing` with your actual package name if different)*
+Options:
 
-## MVP Roadmap (Tasks from `TASKS.md`)
+```bash
+npx ts-validator --help
+```
 
-1.  **CLI Enhancements:** (Partially Done)
-    *   Implement functionality for `--json` output.
-    *   Implement `--fail-on-warning` exit code behavior.
-2.  **Detection Pass Refinements:**
-    *   Handle `req` object aliasing (e.g., `const { body } = req; console.log(body);`).
-    *   Implement validation heuristics to distinguish validated vs. unvalidated access (e.g., checking for calls like `zodSchema.parse(req.body)` nearby).
-3.  **Reporting:**
-    *   Define a `Violation` struct with file, line, column, kind, and expression details.
-    *   Implement human-readable CLI output format.
-    *   Implement JSON output format when `--json` is used.
-4.  **CI/CD:**
-    *   Ensure the tool exits with a non-zero status code if violations are found and `--fail-on-warning` is set.
+---
 
-## Future Goals (Out of Scope for MVP)
+## ✨ What It Does
 
-*   VSCode extension
-*   GitHub bot integration
-*   Rule configuration (`.ts-validatorrc`)
-*   Support for decorator-based validation (e.g., `class-validator`)
+- Recursively parses `.ts` and `.tsx` files.
+- Detects raw access to external inputs like `req.body`.
+- Flags usage that may lack proper runtime validation.
+- Supports basic flags: `--json`, `--fail-on-warning`, `--help`, `--version`.
+
+---
+
+## 🛡️ Why ts-validator?
+
+TypeScript protects you at **compile time**.  
+**ts-validator** protects you at **runtime** — when external data actually hits your app.
+
+Don't trust unvalidated input. Catch it automatically.
+
+---
+
+## 🧰 For Contributors
+
+Want to build locally or extend the tool?  
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+---
+
+# Example Usage
+
+```bash
+npx ts-validator src/index.ts
+```
+
+Output:
+
+```
+Found 2 potential unvalidated accesses:
+  - src/routes/user.ts:14 -> req.body
+  - src/routes/login.ts:22 -> req.query
+```
+
+---
+
+# 📈 Roadmap
+
+- Smarter validation detection (`schema.parse(req.body)`)
+- JSON reporting mode (`--json`)
+- CI/CD support (`--fail-on-warning`)
+
+---
+
+# License
+
+MIT License.

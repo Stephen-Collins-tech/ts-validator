@@ -1,3 +1,4 @@
 /target
 node_modules
 test_output
+npm-wrapper/bin

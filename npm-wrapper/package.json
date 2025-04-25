@@ -1,0 +1,13 @@
+{
+  "name": "ts-validator",
+  "version": "0.0.1",
+  "bin": {
+    "ts-validator": "./cli.js"
+  },
+  "scripts": {
+    "postinstall": "node ./install.js"
+  },
+  "files": ["bin", "install.js", "cli.js"],
+  "os": ["darwin", "linux", "win32"],
+  "cpu": ["x64", "arm64"]
+}

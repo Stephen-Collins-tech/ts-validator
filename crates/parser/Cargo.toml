@@ -1,17 +1,11 @@
 [package]
 name = "parser"
-version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 walkdir = "2"
-clap = { version = "4.5.7", features = ["derive"] }
-swc_common = "8.1.0"
-swc_ecma_ast = { version = "8.1.2", features = ["serde-impl"] }
-swc_ecma_parser = "11.1.2"
-swc_ecma_visit = "8.0.0"
-# serde = { version = "1.0", features = ["derive"] }
-# serde_json = "1.0"
-# pathdiff = "0.2.3"
-# dunce = "1.0.5"
-# clap = { version = "4.5.7", features = ["derive"] }
+clap = { workspace = true }
+swc_ecma_ast = { workspace = true }
+swc_ecma_parser = { workspace = true }
+swc_ecma_visit = { workspace = true }
+swc_common = { workspace = true }

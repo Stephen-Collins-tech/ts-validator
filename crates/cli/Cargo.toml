@@ -6,7 +6,6 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.5.7", features = ["derive"] }
 analysis = { path = "../analysis" }
-error = { path = "../error" }
 validation = { path = "../validation" }
 parser = { path = "../parser" }
 reporting = { path = "../reporting" }

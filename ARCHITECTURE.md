@@ -75,15 +75,6 @@ This document outlines the structure and purpose of the crates within the ts-val
 
 ---
 
-### `crates/error` – **Error Definitions (Future Use)**
-- **Type:** Library crate
-- **Purpose:** Placeholder for shared error handling across crates.
-- **Responsibilities:**
-    - Currently unused.
-    - Can host custom error types for I/O, parser, analysis, etc.
-
----
-
 ### `crates/utils`
 - **Type:** Library crate 
 - **Purpose:** Contains reusable formatting helpers (e.g., for location strings).

@@ -9,7 +9,6 @@
 resolver = "2" # 2021
 members = [
     "crates/analysis",
-    "crates/error",
     "crates/validation",
     "crates/parser",
     "crates/reporting",

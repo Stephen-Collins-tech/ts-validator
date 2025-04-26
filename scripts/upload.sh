@@ -11,6 +11,12 @@ if [[ -z "$TAG" ]]; then
   exit 1
 fi
 
+# Ensure tag has 'v' prefix
+if [[ "$TAG" != v* ]]; then
+  echo "❌ Tag should start with 'v' (e.g., v0.0.1)"
+  exit 1
+fi
+
 # Ensure the GitHub CLI is authenticated
 if ! gh auth status &>/dev/null; then
   echo "❌ GitHub CLI not authenticated. Run: gh auth login"

@@ -1,6 +1,6 @@
 {
-  "name": "ts-validator",
-  "version": "0.0.1",
+  "name": "@stephen-collins-tech/ts-validator",
+  "version": "0.0.2",
   "description": "Rust-powered static analysis for TypeScript APIs",
   "bin": {
     "ts-validator": "./cli.js"
@@ -12,7 +12,8 @@
     "bin",
     "install.js",
     "cli.js",
-    "version.js"
+    "version.js",
+    "README.md"
   ],
   "os": [
     "darwin",
@@ -25,7 +26,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ts-validator/ts-validator.git"
+    "url": "https://github.com/Stephen-Collins-tech/ts-validator.git"
   },
   "keywords": [
     "typescript",

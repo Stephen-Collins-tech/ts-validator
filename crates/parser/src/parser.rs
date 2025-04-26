@@ -11,8 +11,6 @@ pub fn parse_dir(entry: &Path) -> Vec<ParsedModule> {
     let ts_files = find_ts_files(entry);
     let mut parsed_modules: Vec<ParsedModule> = Vec::new();
     for path in ts_files {
-        println!("Parsing: {}", path.display());
-
         let source_code = match fs::read_to_string(&path) {
             Ok(code) => code,
             Err(e) => {
@@ -34,7 +32,7 @@ pub fn parse_dir(entry: &Path) -> Vec<ParsedModule> {
 
         match parser.parse_module() {
             Ok(module) => {
-                println!("✅ Parsed {} successfully", fm.name);
+                println!("✅ {}", fm.name);
                 parsed_modules.push(ParsedModule {
                     path: path.to_path_buf(),
                     module,

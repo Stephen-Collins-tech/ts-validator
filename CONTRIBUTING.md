@@ -43,6 +43,7 @@ Or, after building:
 - **`crates/parser/`** — TypeScript file parsing, import resolution.
 - **`crates/reporting/`** — Output formats, violation reporting.
 - **`crates/utils/`** - Utility functions for the project.
+- **`crates/validation/`** - Validation logic for the project.
 
 Each crate is organized as part of a Cargo workspace.
 

@@ -4,18 +4,37 @@ mod visitor;
 
 use parser::ParsedModule;
 use reporting::violation::Violation;
+use std::collections::HashMap;
 use validation::ValidationRuleSet;
-use visitor::visit_module;
+use visitor::{visit_module, count_controllers};
 
 /// Analyzes parsed modules and returns a list of violations.
 pub fn analyze_modules(modules: Vec<ParsedModule>, rules: ValidationRuleSet) -> Vec<Violation> {
     let mut all_violations = vec![];
+    let mut controllers_per_file = HashMap::new();
 
+    // First pass: count controllers for each file
+    for parsed in &modules {
+        let file_name = parsed.path.iter().rev().take(2).collect::<Vec<_>>().iter().rev().collect::<std::path::PathBuf>();
+        let controller_count = count_controllers(&parsed.module);
+        if controller_count > 0 {
+            controllers_per_file.insert(file_name.to_string_lossy().to_string(), controller_count);
+        }
+    }
+
+    // Second pass: analyze modules and report with proper format
     for parsed in modules {
-        println!("Analyzing: {}", parsed.path.display());
-
         let violations = visit_module(&parsed.source_map, &parsed.module, rules);
-        println!("Found {} violations", violations.len());
+        let file_name = parsed.path.iter().rev().take(2).collect::<Vec<_>>().iter().rev().collect::<std::path::PathBuf>();
+        let file_path = file_name.to_string_lossy().to_string();
+        
+        if let Some(controller_count) = controllers_per_file.get(&file_path) {
+            println!("📦 {} — {} controllers found", file_name.display(), controller_count);
+        } else if violations.is_empty() {
+            println!("✅ {} — No violations found", file_name.display());
+        } else {
+            println!("❗ {} — Found {} violations", file_name.display(), violations.len());
+        }
 
         all_violations.extend(violations);
     }

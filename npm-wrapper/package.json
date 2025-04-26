@@ -1,13 +1,37 @@
 {
   "name": "ts-validator",
   "version": "0.0.1",
+  "description": "Rust-powered static analysis for TypeScript APIs",
   "bin": {
     "ts-validator": "./cli.js"
   },
   "scripts": {
     "postinstall": "node ./install.js"
   },
-  "files": ["bin", "install.js", "cli.js"],
-  "os": ["darwin", "linux", "win32"],
-  "cpu": ["x64", "arm64"]
+  "files": [
+    "bin",
+    "install.js",
+    "cli.js",
+    "version.js"
+  ],
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ts-validator/ts-validator.git"
+  },
+  "keywords": [
+    "typescript",
+    "static-analysis",
+    "security",
+    "validation"
+  ],
+  "license": "MIT"
 }

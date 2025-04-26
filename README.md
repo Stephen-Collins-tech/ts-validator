@@ -54,11 +54,7 @@ npx ts-validator src/index.ts
 
 Output:
 
-```
-Found 2 potential unvalidated accesses:
-  - src/routes/user.ts:14 -> req.body
-  - src/routes/login.ts:22 -> req.query
-```
+![example output](./images/example_output.png)
 
 ---
 

@@ -5,6 +5,7 @@ use std::fs;
 use std::sync::Arc;
 use swc_common::{SourceMap, FileName, sync::Lrc};
 use swc_ecma_parser::{Parser, StringInput, Syntax, TsSyntax};
+use utils::logging::{log, error};
 
 pub fn parse_dir(entry: &Path) -> Vec<ParsedModule> {
     let cm: Arc<SourceMap> = Default::default(); // Shared SourceMap
@@ -14,7 +15,7 @@ pub fn parse_dir(entry: &Path) -> Vec<ParsedModule> {
         let source_code = match fs::read_to_string(&path) {
             Ok(code) => code,
             Err(e) => {
-                eprintln!("Failed to read {}: {}", path.display(), e);
+                error(&format!("Failed to read {}: {}", path.display(), e));
                 continue;
             }
         };
@@ -32,7 +33,7 @@ pub fn parse_dir(entry: &Path) -> Vec<ParsedModule> {
 
         match parser.parse_module() {
             Ok(module) => {
-                println!("✅ {}", fm.name);
+                log(&format!("✅ {}", fm.name));
                 parsed_modules.push(ParsedModule {
                     path: path.to_path_buf(),
                     module,
@@ -40,7 +41,7 @@ pub fn parse_dir(entry: &Path) -> Vec<ParsedModule> {
                 });
             }
             Err(err) => {
-                eprintln!("❌ Failed to parse: {:?}", err);
+                error(&format!("Failed to parse {}: {:?}", path.display(), err));
             }
         }
     }

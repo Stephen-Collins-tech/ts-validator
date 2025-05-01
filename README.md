@@ -29,7 +29,7 @@ npx @stephen-collins-tech/ts-validator --help
 - Recursively parses `.ts` and `.tsx` files.
 - Detects raw access to external inputs like `req.body`.
 - Flags usage that may lack proper runtime validation.
-- Supports basic flags: `--json`, `--fail-on-warning`, `--help`, `--version`.
+- Supports flags: `--json`, `--fail-on-warning`, `--help`, `--version`.
 
 ---
 
@@ -58,6 +58,45 @@ npx @stephen-collins-tech/ts-validator src/index.ts
 Output:
 
 ![example output](./images/example_output.png)
+
+### JSON Output Mode
+
+For CI/CD pipelines or programmatic usage, you can output the results as JSON:
+
+```bash
+npx @stephen-collins-tech/ts-validator src/index.ts --json
+```
+
+This outputs a single JSON string with the following structure:
+
+```json
+{
+  "files_parsed": 10,
+  "violations_count": 3,
+  "elapsed_time_ms": 256,
+  "violations": [
+    {
+      "file": "src/controllers/user.ts",
+      "line": 12,
+      "column": 23,
+      "kind": "DirectAccess",
+      "message": "Unvalidated direct access: req.body"
+    }
+  ]
+}
+```
+
+#### Exit Codes
+
+By default, ts-validator always returns an exit code of 0 even when violations are found. 
+
+If you want to fail CI pipelines or scripts when violations are detected, use the `--fail-on-warning` flag:
+
+```bash
+npx @stephen-collins-tech/ts-validator src/index.ts --json --fail-on-warning
+```
+
+This will output the JSON data and exit with code 1 if any violations are found.
 
 ---
 
@@ -88,8 +127,6 @@ Then in your package.json:
 ## 📈 Roadmap
 
 - Smarter validation detection (`schema.parse(req.body)`)
-- JSON reporting mode (`--json`)
-- CI/CD support (`--fail-on-warning`)
 
 ---
 

@@ -10,6 +10,7 @@ members = [
 ]
 
 [workspace.package]
+name = "ts-validator"
 version = "0.1.0" # Pick the first version you want
 authors = ["Stephen Collins <stephen@stephencollins.tech>"]
 edition = "2021"

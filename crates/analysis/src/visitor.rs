@@ -211,7 +211,7 @@ pub fn count_controllers(module: &Module) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use swc_common::{DUMMY_SP, BytePos, SyntaxContext};
+    use swc_common::{DUMMY_SP, SyntaxContext};
     use swc_ecma_ast::{Ident, IdentName, ComputedPropName, Expr, Lit, Str};
 
     #[test]
@@ -274,8 +274,6 @@ mod tests {
 
     #[test]
     fn test_unvalidated_alias() {
-        // Create a dummy SourceMap
-        let cm = Arc::new(SourceMap::default());
         
         // Create a specialized test version of ControllerVisitor that doesn't need to do source lookups
         struct TestControllerVisitor {

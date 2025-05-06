@@ -7,6 +7,7 @@ use reporting::violation::Violation;
 use std::collections::HashMap;
 use validation::ValidationRuleSet;
 use visitor::{visit_module, count_controllers};
+use utils::logging::log;
 
 /// Analyzes parsed modules and returns a list of violations.
 pub fn analyze_modules(modules: Vec<ParsedModule>, rules: ValidationRuleSet) -> Vec<Violation> {
@@ -29,11 +30,11 @@ pub fn analyze_modules(modules: Vec<ParsedModule>, rules: ValidationRuleSet) -> 
         let file_path = file_name.to_string_lossy().to_string();
         
         if let Some(controller_count) = controllers_per_file.get(&file_path) {
-            println!("📦 {} — {} controllers found", file_name.display(), controller_count);
+            log(&format!("📦 {} — {} controllers found", file_name.display(), controller_count));
         } else if violations.is_empty() {
-            println!("✅ {} — No violations found", file_name.display());
+            log(&format!("✅ {} — No violations found", file_name.display()));
         } else {
-            println!("❗ {} — Found {} violations", file_name.display(), violations.len());
+            log(&format!("❗ {} — Found {} violations", file_name.display(), violations.len()));
         }
 
         all_violations.extend(violations);

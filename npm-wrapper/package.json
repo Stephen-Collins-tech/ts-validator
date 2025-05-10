@@ -1,6 +1,6 @@
 {
   "name": "@stephen-collins-tech/ts-validator",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Rust-powered static analysis for TypeScript APIs",
   "bin": {
     "ts-validator": "./cli.js"
